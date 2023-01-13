@@ -12,9 +12,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Add SHORT_SHA env property with commit short sha
+      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag app:$(date +%s)
+      run: docker build . --file Dockerfile --tag app:${SHORT_SHA}
 
     - name: Tag new image as latest
-      run: docker tag app:$(date +%s) app:latest
+      run: docker tag app:${SHORT_SHA} app:latest
