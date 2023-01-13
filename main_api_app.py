@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, BaseSettings
+from fastapi.responses import JSONResponse
+import os
 
 class Item(BaseModel):
     message: str
@@ -7,23 +9,26 @@ class Item(BaseModel):
     from_: str
     timeToLifeSec: int
 
-app = FastAPI()
+class Settings(BaseSettings):
+    openapi_url: str = ""
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+settings = Settings()
+APP_VERSION = os.getenv('APP_VERSION')
 
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: str = None):
-#     return {"item_id": item_id, "q": q}
+app = FastAPI(openapi_url=settings.openapi_url)
 
 @app.post("/DevOps")
 async def create_item(item: Item):
-    item_name = item["to"]
-    response_message = f"Hello {item_name} your messaje will be send"
-    return {
-        "message": response_message
-    }
+    response_message = f"Hello {item.to} your messaje will be send"
+    content = { "message": response_message }
+    headers = { "X-App-Version": APP_VERSION }
+    return JSONResponse(content=content, headers=headers)
+
+@app.api_route("/{path_name:path}")
+async def catch_all():
+    content = "ERROR"
+    headers = { "X-App-Version": APP_VERSION }
+    return JSONResponse(content=content, headers=headers)
 
 # {
 # “message” : “This is a test”,

@@ -1,5 +1,16 @@
 FROM python:3.8.16-slim
 
+ARG APP_VERSION=00000000
+ENV APP_VERSION=$APP_VERSION
+
+# ARG UID=1000
+# ARG GID=1000
+
+# RUN groupadd -g "${GID}" python && \
+#     useradd --create-home --no-log-init -u "${UID}" -g "${GID}" python
+
+# USER python
+
 WORKDIR /usr/src/app
 
 EXPOSE 8000

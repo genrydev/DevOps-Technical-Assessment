@@ -1,0 +1,36 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Static Code Analysis
+      run: docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src horuszup/horusec-cli:latest horusec start -p /src -P $(pwd)
+
+  build_and_push_docker_image:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3  
+
+    - name: Add SHORT_SHA env property with commit short sha
+      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+    
+    - name: Build & Push the Docker image
+      run: |
+        docker build . --file Dockerfile --tag app:${SHORT_SHA}
+        docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:${SHORT_SHA}
+        docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:latest
+        docker login glgacr.azurecr.io --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_TOKEN }}
+        docker push glgacr.azurecr.io/app:${SHORT_SHA}
+        docker push glgacr.azurecr.io/app:latest
