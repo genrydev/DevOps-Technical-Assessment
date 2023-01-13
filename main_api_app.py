@@ -14,6 +14,8 @@ class Settings(BaseSettings):
 
 settings = Settings()
 APP_VERSION = os.getenv('APP_VERSION')
+INSTANCE_ID = os.getenv('HOSTNAME')
+headers_json = { "X-App-Version": APP_VERSION, "X-Container-Instance-Id": INSTANCE_ID }
 
 app = FastAPI(openapi_url=settings.openapi_url)
 
@@ -21,14 +23,12 @@ app = FastAPI(openapi_url=settings.openapi_url)
 async def create_item(item: Item):
     response_message = f"Hello {item.to} your messaje will be send"
     content = { "message": response_message }
-    headers = { "X-App-Version": APP_VERSION }
-    return JSONResponse(content=content, headers=headers)
+    return JSONResponse(content=content, headers=headers_json)
 
 @app.api_route("/{path_name:path}")
 async def catch_all():
     content = "ERROR"
-    headers = { "X-App-Version": APP_VERSION }
-    return JSONResponse(content=content, headers=headers)
+    return JSONResponse(content=content, headers=headers_json)
 
 # {
 # “message” : “This is a test”,
