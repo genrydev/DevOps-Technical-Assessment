@@ -1,4 +1,4 @@
-FORM 3.8.16-slim
+FROM 3.8.16-slim
 
 WORKDIR /usr/src/app
 
