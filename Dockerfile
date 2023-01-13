@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main_api_app.py ./
 
-CMD [ "uvicorn main_api_app:app --host 0.0.0.0 --port 8000 --reload" ]
+CMD [ "uvicorn", "main_api_app:app", "--host", "0.0.0.0", "--port", "8000", "--reload" ]
