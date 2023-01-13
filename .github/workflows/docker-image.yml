@@ -19,5 +19,10 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag app:${SHORT_SHA}
 
-    - name: Tag new image as latest
-      run: docker tag app:${SHORT_SHA} app:latest
+    - name: Tag image for ACR
+      run: |
+        docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:${SHORT_SHA}
+        docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:latest
+
+    - name: Login to ACR
+      run: docker login glgacr.azurecr.io --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_TOKEN }}
