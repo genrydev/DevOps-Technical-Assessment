@@ -24,62 +24,61 @@ resource "azapi_resource" "containerapp_environment" {
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
   name      = "aca-env"
-  
-  body   = jsonencode({
-    properties = { 
+
+  body = jsonencode({
+    properties = {
       appLogsConfiguration = {
-        destination               = "log-analytics"
+        destination = "log-analytics"
         logAnalyticsConfiguration = {
           customerId = azurerm_log_analytics_workspace.loganalytics.workspace_id
           sharedKey  = azurerm_log_analytics_workspace.loganalytics.primary_shared_key
         }
       }
     }
- })
+  })
 }
 
 resource "azapi_resource" "aca" {
-  type = "Microsoft.App/containerapps@2022-06-01-preview"  
+  type      = "Microsoft.App/containerapps@2022-06-01-preview"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
   name      = "aca"
-  
+
   body = jsonencode({
-    properties: {
+    properties : {
       environmentId = azapi_resource.containerapp_environment.id
-      configuration = {        
+      configuration = {
         activeRevisionsMode = "Single"
         secrets = [
           {
-            name = "reg-pswd-2480efc7-b65f"
+            name  = "reg-pswd-2480efc7-b65f"
             value = var.secret_value
           }
         ]
         ingress = {
-          external = false
-          targetPort = 80
-          transport = "auto"
+          external      = true
+          targetPort    = 8000
+          transport     = "auto"
           allowInsecure = true
-        
         }
         registries = [
           {
-            username = "glgacr"
+            username          = "glgacr"
             passwordSecretRef = "reg-pswd-2480efc7-b65f"
-            server = "glgacr.azurecr.io"
+            server            = "glgacr.azurecr.io"
           }
         ]
       }
       template = {
         containers = [
           {
-            name = "main-app"
+            name  = "main-app"
             image = "glgacr.azurecr.io/app:latest"
             resources = {
-              cpu = 0.25
+              cpu    = 0.25
               memory = ".5Gi"
             }
-          }         
+          }
         ]
         scale = {
           minReplicas = 2
@@ -87,5 +86,5 @@ resource "azapi_resource" "aca" {
         }
       }
     }
-  })  
+  })
 }
