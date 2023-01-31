@@ -62,11 +62,13 @@ resource "azapi_resource" "aca" {
           allowInsecure = true
         
         }
-        registries = {
-          username = "glgacr"
-          passwordSecretRef = "reg-pswd-2480efc7-b65f"
-          server = "glgacr.azurecr.io"
-        }
+        registries = [
+          {
+            username = "glgacr"
+            passwordSecretRef = "reg-pswd-2480efc7-b65f"
+            server = "glgacr.azurecr.io"
+          }
+        ]
       }
       template = {
         containers = [
