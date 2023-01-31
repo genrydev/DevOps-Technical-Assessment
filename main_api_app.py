@@ -25,10 +25,14 @@ async def create_item(item: Item):
     content = { "message": response_message }
     return JSONResponse(content=content, headers=headers_json)
 
-@app.api_route("/{path_name:path}")
-async def catch_all():
-    content = "ERROR"
-    return JSONResponse(content=content, headers=headers_json)
+@app.get("/")
+def create_item():
+    return JSONResponse(content={ "ok": "ok" })
+
+# @app.api_route("/{path_name:path}")
+# async def catch_all():
+#     content = "ERROR"
+#     return JSONResponse(content=content, headers=headers_json)
 
 # {
 # “message” : “This is a test”,
