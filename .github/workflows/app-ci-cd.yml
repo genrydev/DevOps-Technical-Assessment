@@ -45,4 +45,4 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-          az account show
+          az containerapp update --name aca --resource-group rg-dta --image glgacr.azurecr.io/app:${SHORT_SHA}
