@@ -28,7 +28,7 @@ jobs:
     
     - name: Build & Push the Docker image
       run: |
-        docker build . --file Dockerfile --tag app:${SHORT_SHA} --build-arg APP_VERSION=${SHORT_SHA}
+        docker build . --file Dockerfile --tag app:${SHORT_SHA} --build-arg APP_VERSION=${SHORT_SHA} API_KEY=${{ secrets.API_KEY }}
         docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:${SHORT_SHA}
         docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:latest
         docker login glgacr.azurecr.io --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_TOKEN }}
@@ -40,7 +40,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Azure CLI script
+    - name: Azure - Update container app revision with new image
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0

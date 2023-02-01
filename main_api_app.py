@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel, BaseSettings
 from fastapi.responses import JSONResponse
+from fastapi.security.api_key import APIKey
 import os
+import auth
 
 class Item(BaseModel):
     message: str
@@ -20,7 +22,7 @@ headers_json = { "X-App-Version": APP_VERSION, "X-Container-Instance-Id": INSTAN
 app = FastAPI(openapi_url=settings.openapi_url)
 
 @app.post("/DevOps")
-async def create_item(item: Item):
+async def create_item(item: Item, api_key: APIKey = Depends(auth.get_api_key)):
     response_message = f"Hello {item.to} your messaje will be send"
     content = { "message": response_message }
     return JSONResponse(content=content, headers=headers_json)
