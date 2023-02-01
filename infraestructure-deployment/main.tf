@@ -59,7 +59,7 @@ resource "azapi_resource" "aca" {
           external      = true
           targetPort    = 8000
           transport     = "auto"
-          allowInsecure = true
+          allowInsecure = true          
         }
         registries = [
           {

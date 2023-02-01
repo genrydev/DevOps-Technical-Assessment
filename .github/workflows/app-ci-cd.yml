@@ -28,9 +28,21 @@ jobs:
     
     - name: Build & Push the Docker image
       run: |
-        docker build . --file Dockerfile --tag app:${SHORT_SHA}
+        docker build . --file Dockerfile --tag app:${SHORT_SHA} --build-arg APP_VERSION=${SHORT_SHA}
         docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:${SHORT_SHA}
         docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:latest
         docker login glgacr.azurecr.io --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_TOKEN }}
         docker push glgacr.azurecr.io/app:${SHORT_SHA}
         docker push glgacr.azurecr.io/app:latest
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          az account show
