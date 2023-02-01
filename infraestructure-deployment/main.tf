@@ -38,7 +38,7 @@ resource "azapi_resource" "containerapp_environment" {
   })
 }
 
-resource "azapi_resource" "aca" {
+resource "azapi_resource" "catest" {
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
@@ -89,7 +89,7 @@ resource "azapi_resource" "aca" {
   })
 }
 
-resource "azapi_resource" "aca" {
+resource "azapi_resource" "caprod" {
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
