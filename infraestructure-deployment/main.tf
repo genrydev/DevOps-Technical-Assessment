@@ -177,7 +177,7 @@ resource "azurerm_dns_a_record" "test_a_record" {
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
   records             = [
-    jsondecode(data.azapi_resource.test_custom_domain.output).properties.outboundIpAddresses
+    "${jsondecode(data.azapi_resource.test_custom_domain.output).properties.outboundIpAddresses}"
   ]
 }
 
@@ -187,7 +187,7 @@ resource "azurerm_dns_a_record" "prod_a_record" {
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
   records             = [
-    jsondecode(data.azapi_resource.prod_custom_domain.output).properties.outboundIpAddresses
+    "${jsondecode(data.azapi_resource.prod_custom_domain.output).properties.outboundIpAddresses}"
   ]
 }
 
