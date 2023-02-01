@@ -59,7 +59,7 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
           az config set extension.use_dynamic_install=yes_without_prompt
-          az containerapp update --name aca --resource-group rg-dta --image glgacr.azurecr.io/app:${SHORT_SHA}
+          az containerapp update --name catest --resource-group rg-dta --image glgacr.azurecr.io/app:${SHORT_SHA}
 
   deploy_to_prod:
 
@@ -80,10 +80,10 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Azure - Update container app TEST
+    - name: Azure - Update container app PROD
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0
         inlineScript: |
           az config set extension.use_dynamic_install=yes_without_prompt
-          az containerapp update --name aca --resource-group rg-dta --image glgacr.azurecr.io/app:${SHORT_SHA}
+          az containerapp update --name caprod --resource-group rg-dta --image glgacr.azurecr.io/app:${SHORT_SHA}
