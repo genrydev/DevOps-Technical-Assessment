@@ -35,6 +35,8 @@ jobs:
         docker push glgacr.azurecr.io/app:${SHORT_SHA}
         docker push glgacr.azurecr.io/app:latest
 
+  deploy:
+  
     - name: Azure Login
       uses: azure/login@v1
       with:
@@ -46,4 +48,4 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
           az config set extension.use_dynamic_install=yes_without_prompt
-          az containerapp update --name aca --resource-group rg-dta --image glgacr.azurecr.io/app:${SHORT_SHA}
+          az containerapp update --name aca --resource-group rg-dta --image glgacr.azurecr.io/app:${SHORT_SHA}  
