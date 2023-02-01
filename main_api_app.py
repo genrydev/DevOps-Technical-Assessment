@@ -34,9 +34,13 @@ app = FastAPI(openapi_url=settings.openapi_url)
 
 @app.post("/DevOps", dependencies=[Depends(get_api_key)])
 async def create_item(item: Item):
-    response_message = f"Hello {item.to} your messaje will be send"
-    content = { "message": response_message }
-    return JSONResponse(content=content, headers=headers_json)
+    try:
+        response_message = f"Hello {item.to} your messaje will be send"
+        content = { "message": response_message }
+        return JSONResponse(content=content, headers=headers_json)
+    except:
+        content = "ERROR"
+        return JSONResponse(content=content, headers=headers_json)
 
 @app.api_route("/{path_name:path}")
 async def catch_all():

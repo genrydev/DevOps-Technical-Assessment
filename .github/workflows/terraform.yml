@@ -24,7 +24,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: infraestructure-deployment
+        working-directory: infrastructure-deployment
 
     steps:
       - name: Checkout
