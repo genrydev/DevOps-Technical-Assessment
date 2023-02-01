@@ -195,7 +195,7 @@ resource "azurerm_dns_txt_record" "prod_txt_record" {
   tags = { environment = "production" }
 }
 
-resource "azurerm_dns_cname_record" "example" {
+resource "azurerm_dns_cname_record" "test_cname_record" {
   name                = "www"
   zone_name           = azurerm_dns_zone.genryapitest.name
   resource_group_name = azurerm_resource_group.rg.name
@@ -203,7 +203,7 @@ resource "azurerm_dns_cname_record" "example" {
   record              = jsondecode(data.azapi_resource.test_custom_domain.output).properties.configuration.ingress.fqdn
 }
 
-resource "azurerm_dns_cname_record" "example" {
+resource "azurerm_dns_cname_record" "prod_cname_record" {
   name                = "www"
   zone_name           = azurerm_dns_zone.genryapiprod.name
   resource_group_name = azurerm_resource_group.rg.name
