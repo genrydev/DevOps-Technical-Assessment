@@ -147,7 +147,7 @@ data "azapi_resource" "test_custom_domain" {
   parent_id = azurerm_resource_group.rg.id
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
 
-  response_export_values = ["properties.outboundIpAddresses", "properties.customDomainVerificationId"]
+  response_export_values = ["properties.configuration.ingress.fqdn", "properties.customDomainVerificationId"]
 }
 
 data "azapi_resource" "prod_custom_domain" {
@@ -155,7 +155,7 @@ data "azapi_resource" "prod_custom_domain" {
   parent_id = azurerm_resource_group.rg.id
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
 
-  response_export_values = ["properties.outboundIpAddresses", "properties.customDomainVerificationId"]
+  response_export_values = ["properties.configuration.ingress.fqdn", "properties.customDomainVerificationId"]
 }
 
 
@@ -171,29 +171,12 @@ resource "azurerm_dns_zone" "genryapiprod" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-resource "azurerm_dns_a_record" "test_a_record" {
-  name                = "test_a_record"
-  zone_name           = azurerm_dns_zone.genryapitest.name
-  resource_group_name = azurerm_resource_group.rg.name
-  ttl                 = 300
-  records             = jsondecode(data.azapi_resource.test_custom_domain.output).properties.outboundIpAddresses
-}
-
-resource "azurerm_dns_a_record" "prod_a_record" {
-  name                = "prod_a_record"
-  zone_name           = azurerm_dns_zone.genryapiprod.name
-  resource_group_name = azurerm_resource_group.rg.name
-  ttl                 = 300
-  records             = jsondecode(data.azapi_resource.prod_custom_domain.output).properties.outboundIpAddresses
-}
-
 resource "azurerm_dns_txt_record" "test_txt_record" {
-  name                = "test_txt_record"
+  name                = "asuid.www"
   zone_name           = azurerm_dns_zone.genryapitest.name
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
-
-  record { value = "asuis" }
+ 
   record {
     value = jsondecode(data.azapi_resource.test_custom_domain.output).properties.customDomainVerificationId
   }
@@ -201,14 +184,29 @@ resource "azurerm_dns_txt_record" "test_txt_record" {
 }
 
 resource "azurerm_dns_txt_record" "prod_txt_record" {
-  name                = "prod_txt_record"
+  name                = "asuid.www"
   zone_name           = azurerm_dns_zone.genryapiprod.name
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
 
-  record { value = "asuis" }
   record {
     value = jsondecode(data.azapi_resource.prod_custom_domain.output).properties.customDomainVerificationId
   }
   tags = { environment = "production" }
+}
+
+resource "azurerm_dns_cname_record" "example" {
+  name                = "www"
+  zone_name           = azurerm_dns_zone.genryapitest.name
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 300
+  record              = jsondecode(data.azapi_resource.test_custom_domain.output).properties.configuration.ingress.fqdn
+}
+
+resource "azurerm_dns_cname_record" "example" {
+  name                = "www"
+  zone_name           = azurerm_dns_zone.genryapiprod.name
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 300
+  record              = jsondecode(data.azapi_resource.prod_custom_domain.output).properties.configuration.ingress.fqdn
 }
