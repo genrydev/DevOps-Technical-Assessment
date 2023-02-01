@@ -42,7 +42,58 @@ resource "azapi_resource" "aca" {
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
   parent_id = azurerm_resource_group.rg.id
   location  = azurerm_resource_group.rg.location
-  name      = "aca"
+  name      = "catest"
+
+  body = jsonencode({
+    properties : {
+      environmentId = azapi_resource.containerapp_environment.id
+      configuration = {
+        activeRevisionsMode = "Single"
+        secrets = [
+          {
+            name  = "reg-pswd-2480efc7-b65f"
+            value = var.secret_value
+          }
+        ]
+        ingress = {
+          external      = true
+          targetPort    = 8000
+          transport     = "auto"
+          allowInsecure = true          
+        }
+        registries = [
+          {
+            username          = "glgacr"
+            passwordSecretRef = "reg-pswd-2480efc7-b65f"
+            server            = "glgacr.azurecr.io"
+          }
+        ]
+      }
+      template = {
+        containers = [
+          {
+            name  = "main-app"
+            image = "glgacr.azurecr.io/app:latest"
+            resources = {
+              cpu    = 0.25
+              memory = ".5Gi"
+            }
+          }
+        ]
+        scale = {
+          minReplicas = 2
+          maxReplicas = 5
+        }
+      }
+    }
+  })
+}
+
+resource "azapi_resource" "aca" {
+  type      = "Microsoft.App/containerapps@2022-06-01-preview"
+  parent_id = azurerm_resource_group.rg.id
+  location  = azurerm_resource_group.rg.location
+  name      = "caprod"
 
   body = jsonencode({
     properties : {
