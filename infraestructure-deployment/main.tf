@@ -143,7 +143,7 @@ resource "azapi_resource" "caprod" {
 # Get data from Container Apps
 
 data "azapi_resource" "test_custom_domain" {
-  name      = "test_custom_domain_ip"
+  name      = "test_custom_domain"
   parent_id = azapi_resource.catest.id
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
 
@@ -151,7 +151,7 @@ data "azapi_resource" "test_custom_domain" {
 }
 
 data "azapi_resource" "prod_custom_domain" {
-  name      = "prod_custom_domain_ip"
+  name      = "prod_custom_domain"
   parent_id = azapi_resource.caprod.id
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
 
