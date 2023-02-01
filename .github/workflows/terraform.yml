@@ -1,4 +1,4 @@
-name: "Azure Deployment"
+name: "Azure Infrastructure Deployment"
 
 on:
   push:
