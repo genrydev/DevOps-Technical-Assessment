@@ -110,7 +110,7 @@ resource "azapi_resource" "caprod" {
           external      = true
           targetPort    = 8000
           transport     = "auto"
-          allowInsecure = true          
+          allowInsecure = true
         }
         registries = [
           {
@@ -143,16 +143,16 @@ resource "azapi_resource" "caprod" {
 # Get data from Container Apps
 
 data "azapi_resource" "test_custom_domain" {
-  name      = "test_custom_domain"
-  parent_id = azapi_resource.catest.id
+  name      = "catest"
+  parent_id = azurerm_resource_group.rg.id
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
 
   response_export_values = ["properties.outboundIpAddresses", "properties.customDomainVerificationId"]
 }
 
 data "azapi_resource" "prod_custom_domain" {
-  name      = "prod_custom_domain"
-  parent_id = azapi_resource.caprod.id
+  name      = "caprod"
+  parent_id = azurerm_resource_group.rg.id
   type      = "Microsoft.App/containerapps@2022-06-01-preview"
 
   response_export_values = ["properties.outboundIpAddresses", "properties.customDomainVerificationId"]
