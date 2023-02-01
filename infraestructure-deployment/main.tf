@@ -45,7 +45,7 @@ resource "azapi_resource" "catest" {
   name      = "catest"
 
   body = jsonencode({
-    properties : {
+    properties = {
       environmentId = azapi_resource.containerapp_environment.id
       configuration = {
         activeRevisionsMode = "Single"
@@ -96,7 +96,7 @@ resource "azapi_resource" "caprod" {
   name      = "caprod"
 
   body = jsonencode({
-    properties : {
+    properties = {
       environmentId = azapi_resource.containerapp_environment.id
       configuration = {
         activeRevisionsMode = "Single"
@@ -138,4 +138,81 @@ resource "azapi_resource" "caprod" {
       }
     }
   })
+}
+
+# Get data from Container Apps
+
+data "azapi_resource" "test_custom_domain" {
+  name      = "test_custom_domain_ip"
+  parent_id = azapi_resource.catest.id
+  type      = "Microsoft.App/containerapps@2022-06-01-preview"
+
+  response_export_values = ["properties.outboundIpAddresses", "properties.customDomainVerificationId"]
+}
+
+data "azapi_resource" "prod_custom_domain" {
+  name      = "prod_custom_domain_ip"
+  parent_id = azapi_resource.caprod.id
+  type      = "Microsoft.App/containerapps@2022-06-01-preview"
+
+  response_export_values = ["properties.outboundIpAddresses", "properties.customDomainVerificationId"]
+}
+
+
+# Custom Domains
+
+resource "azurerm_dns_zone" "genryapitest" {
+  name                = "genryapitest.com"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_dns_zone" "genryapiprod" {
+  name                = "genryapiprod.com"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_dns_a_record" "test_a_record" {
+  name                = "test_a_record"
+  zone_name           = azurerm_dns_zone.genryapitest.name
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 300
+  records             = [
+    jsondecode(data.azapi_resource.test_custom_domain.output).properties.outboundIpAddresses
+  ]
+}
+
+resource "azurerm_dns_a_record" "prod_a_record" {
+  name                = "prod_a_record"
+  zone_name           = azurerm_dns_zone.genryapiprod.name
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 300
+  records             = [
+    jsondecode(data.azapi_resource.prod_custom_domain.output).properties.outboundIpAddresses
+  ]
+}
+
+resource "azurerm_dns_txt_record" "test_txt_record" {
+  name                = "test_txt_record"
+  zone_name           = azurerm_dns_zone.genryapitest.name
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 300
+
+  record { value = "asuis" }
+  record {
+    value = jsondecode(data.azapi_resource.test_custom_domain.output).properties.customDomainVerificationId
+  }
+  tags = { environment = "test" }
+}
+
+resource "azurerm_dns_txt_record" "prod_txt_record" {
+  name                = "prod_txt_record"
+  zone_name           = azurerm_dns_zone.genryapiprod.name
+  resource_group_name = azurerm_resource_group.rg.name
+  ttl                 = 300
+
+  record { value = "asuis" }
+  record {
+    value = jsondecode(data.azapi_resource.prod_custom_domain.output).properties.customDomainVerificationId
+  }
+  tags = { environment = "production" }
 }
