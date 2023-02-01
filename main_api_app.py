@@ -21,8 +21,8 @@ headers_json = { "X-App-Version": APP_VERSION, "X-Container-Instance-Id": INSTAN
 
 app = FastAPI(openapi_url=settings.openapi_url)
 
-@app.post("/DevOps")
-async def create_item(item: Item, api_key: APIKey = Depends(auth.get_api_key)):
+@app.post("/DevOps", dependencies=[Depends(auth.get_api_key)])
+async def create_item(item: Item):
     response_message = f"Hello {item.to} your messaje will be send"
     content = { "message": response_message }
     return JSONResponse(content=content, headers=headers_json)

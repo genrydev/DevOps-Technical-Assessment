@@ -28,7 +28,7 @@ jobs:
     
     - name: Build & Push the Docker image
       run: |
-        docker build . --file Dockerfile --tag app:${SHORT_SHA} --build-arg APP_VERSION=${SHORT_SHA} API_KEY=${{ secrets.API_KEY }}
+        docker build . --file Dockerfile --tag app:${SHORT_SHA} --build-arg APP_VERSION=${SHORT_SHA} --build-arg API_KEY=${{ secrets.API_KEY }}
         docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:${SHORT_SHA}
         docker tag app:${SHORT_SHA} glgacr.azurecr.io/app:latest
         docker login glgacr.azurecr.io --username ${{ secrets.ACR_USER }} --password ${{ secrets.ACR_TOKEN }}
